@@ -1,0 +1,52 @@
+version: '3.9'
+services:
+  db:
+    image: mysql:8.0.19
+    command: '--default-authentication-plugin=mysql_native_password'
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=somewordpress
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD=wordpress
+      - WORDPRESS_DEBUG=1
+  wordpress:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      # choose what we want to work on
+      # - ../:/var/www/html
+      # - ../plugin-dev/:/var/www/html/wp-content/plugins/plugin-dev
+      # - ../theme-dev/:/var/www/html/wp-content/themes/theme-dev
+      # for php debugging. place it anywhere you want to debug
+      - ../.vscode:/var/www/html/.vscode
+      # uncomment if need to upload smth big
+      # - ./upload.ini:/usr/local/etc/php/conf.d/upload.ini
+    ports:
+      - 8080:80
+    restart: always
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=wordpress
+      - WORDPRESS_DB_NAME=wordpress
+    sysctls:
+      - net.ipv4.ip_unprivileged_port_start=0
+    # uncomment if it's needed  
+  # phpmyadmin:
+  #   depends_on:
+  #     - db
+  #   image: phpmyadmin/phpmyadmin
+  #   volumes:
+  #     - ./upload.ini:/usr/local/etc/php/conf.d/upload.ini
+  #   restart: always
+  #   ports:
+  #     - "8091:80"
+  #   environment:
+  #     PMA_HOST: db
+  #     MYSQL_ROOT_PASSWORD: somewordpress
+volumes:
+  db_data:

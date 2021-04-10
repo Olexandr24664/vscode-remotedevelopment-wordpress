@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "name": "Listen for Xdebug",
+            "type": "php",
+            "request": "launch",
+            // default port for xdebug3
+            "port": 9003
+        }
+    ]
+}
